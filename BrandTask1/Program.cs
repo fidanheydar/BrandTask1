@@ -1,41 +1,101 @@
 ﻿using BrandTask1.DAL;
 using BrandTask1.Models;
 
-
-foreach (var item in GetAllBrands())
+string opt;
+do
 {
-    Console.WriteLine(item);
-}
+    Console.WriteLine(" ***Menu*** ");
+    Console.WriteLine("1.Create brand");
+    Console.WriteLine("2.Get brand by Id");
+    Console.WriteLine("3.Get all brands");
+    Console.WriteLine("4.Update brand");
+    Console.WriteLine("5.Delete brand");
 
-void AddBrand()
-{
-   AppDbContext dbcontext = new AppDbContext();
-    var newBrand = new Brand
+    opt= Console.ReadLine();
+    AppDbContext dbContext = new AppDbContext();
+    string brName,brIdStr,prName,prIdStr;
+    int brId,prId;
+    double price;
+
+    switch (opt)
     {
-        Name = "Bmw"
-    };
-    dbcontext.Brands.Add(newBrand);
-    dbcontext.SaveChanges();
-}
+        case "1":
+            do
+            {
+                Console.WriteLine("Enter the brand name:");
+                brName = Console.ReadLine();
 
-List<Brand> GetAllBrands()
-{
-    AppDbContext dbcontext = new AppDbContext();
-    return dbcontext.Brands.ToList();
-}
+            } while (string.IsNullOrWhiteSpace(brName));
+            var newBrand = new Brand
+            {
+                Name = brName,
+            };
+            dbContext.Brands.Add(newBrand);
+            dbContext.SaveChanges();
+            Console.WriteLine("Brand successfully created");
+            break;
+            case "2":
+            do
+            {
+                Console.Write("Enter the brand Id ");
+                brIdStr = Console.ReadLine();
+            } while (!int.TryParse(brIdStr, out brId) || brId < 0);
+            var brand = dbContext.Brands.Find(brId);
+            if (brand != null) 
+                Console.WriteLine(brand);
+            else
+                Console.WriteLine("Brand not found!");
+            break;
+            case "3":
+            var brands = dbContext.Brands.ToList();
+            foreach (var item in brands)
+            {
+                Console.WriteLine(item);
+            }
+            break;
+            case "4":
+            do
+            {
+                Console.Write("Enter the brand Id ");
+                brIdStr = Console.ReadLine();
+            } while (!int.TryParse(brIdStr, out brId) || brId < 0);
+             brand = dbContext.Brands.Find(brId);
+            if (brand != null)
+            {
+                do
+                {
+                    Console.Write("Enter the new brand name:");
+                    brName = Console.ReadLine();
 
-void UpdateBrandName()
-{
-    AppDbContext dbcontext = new AppDbContext();
-    var brand = dbcontext.Brands.First();
-    brand.Name = "Porsche";
-    dbcontext.SaveChanges();
-}
+                } while (string.IsNullOrWhiteSpace(brName));
+                brand.Name = brName;
+                dbContext.SaveChanges();
+                Console.WriteLine("Brand succesfully updated");
+                break;
+            }
+            else
+                Console.WriteLine("Brand not found!");
+            break;
+            case "5":
+            do
+            {
+                Console.Write("Enter the brand Id ");
+                brIdStr = Console.ReadLine();
+            } while (!int.TryParse(brIdStr, out brId) || brId < 0);
+            brand = dbContext.Brands.Find(brId);
+            if (brand != null)
+            {
+                dbContext.Brands.Remove(brand);
+                dbContext.SaveChanges();
+                Console.WriteLine("Brand succesfully deleted");
+            }
+            else 
+                Console.WriteLine("Brand not found!");
+            break;
 
-void DeleteBrand()
-{
-    AppDbContext dbcontext = new AppDbContext();
-    var brand = dbcontext.Brands.First();
-    dbcontext.Brands.Remove(brand);
-    dbcontext.SaveChanges();
-}
+        default:
+            break;
+    }
+
+
+} while (true);
